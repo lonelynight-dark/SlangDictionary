@@ -17,11 +17,22 @@ public class Main {
 
         SlangMap slangMap = new SlangMap();
 
-        Slang slang = slangMap.searchByKey("5EVER");
+        Slang slang = slangMap.searchByKey("ABCXYZ");
 
-        System.out.println(slang.getDefinitionList());
+        if (slang == null)
+            System.out.println("not found");
+        else
+            System.out.println(slang.getDefinitionList());
 
-        System.out.println(slangMap.searchByDefinition("ool"));
+        //System.out.println(slangMap.searchByDefinition("ool"));
+
+        //slangMap.reset();
+
+        System.out.println(slangMap.randomSlang(4));
+
+//        slangMap.add(new Slang("ABCXYZ", "No meaning"), true);
+//        slangMap.add(new Slang("ABCXYZ", "No meaning 2"), false);
+//        slangMap.add(new Slang("ABCXYZ", "No meaning 3"), false);
 
         try {
             slangMap.saveDataStructure();

@@ -3,6 +3,7 @@ package Slang;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Slang
@@ -16,6 +17,11 @@ public class Slang implements Serializable {
 
     public Slang(String word) {
         this.word = word;
+    }
+
+    public Slang(String word, String[] definitionList) {
+        this.word = word;
+        Collections.addAll(this.definitionList, definitionList);
     }
 
     public Slang(String word, String definition) {
@@ -48,6 +54,8 @@ public class Slang implements Serializable {
             str.append(definitionList.get(i));
             if (i != definitionList.size() - 1) str.append("|");
         }
+        str.append("\n");
+
         return str.toString();
     }
 
@@ -58,7 +66,8 @@ public class Slang implements Serializable {
             return null;
         }
 
-        return new Slang(part[0], Arrays.toString(part[1].split("\\|")));
+        String[] list = part[1].split("\\|");
+        return new Slang(part[0], list);
     }
 
     public void addDefinition(ArrayList<String> definitionList) {

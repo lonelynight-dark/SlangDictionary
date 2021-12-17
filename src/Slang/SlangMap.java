@@ -17,14 +17,14 @@ public class SlangMap implements Serializable {
         try {
             loadDataStructure(); // load data structure
         } catch (IOException e) {
-            readFile(); // first run need to load from file
+            String file_in = "data/slang.txt";
+            readFile(file_in); // first run need to load from file
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private void readFile() {
-        String file_in = "data/slang.txt";
+    private void readFile(String file_in) {
         try {
             BufferedReader bw = new BufferedReader(new InputStreamReader
                     (new FileInputStream(file_in)));
@@ -44,15 +44,23 @@ public class SlangMap implements Serializable {
     }
 
     private void writeFile() {
+        writeFile(false, null);
+    }
+
+    private void writeFile(boolean isAppend, Slang newSlang) {
         String file_out = "data/slang.txt";
         try {
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(
-                    new FileOutputStream(file_out)));
+                    new FileOutputStream(file_out, isAppend)));
 
-
-            for (Slang value: slangMap.values()) {
-                bw.write(value.toString());
+            if (isAppend) {
+                bw.write(newSlang.toString());
+            }
+            else {
+                for (Slang value: slangMap.values()) {
+                    bw.write(value.toString());
+                }
             }
 
             bw.close();
@@ -96,24 +104,39 @@ public class SlangMap implements Serializable {
     }
 
     public void add(Slang newSlang, boolean isOverride) {
-        if (isOverride) {
+        if (slangMap.get(newSlang.getWord()) == null) {
             slangMap.put(newSlang.getWord(), newSlang);
+            writeFile(true, newSlang);
+            return;
+        }
+        if (isOverride) {
+            slangMap.replace(newSlang.getWord(), newSlang);
         }
         else {
             slangMap.get(newSlang.getWord()).addDefinition(newSlang.getDefinitionList());
         }
+        writeFile();
     }
 
     public void delete(String word) {
         slangMap.remove(word);
+        writeFile();
     }
 
     public void edit(String word, Slang newSlang) {
-        slangMap.replace(word, newSlang);
+        if (word.equalsIgnoreCase(newSlang.getWord()))
+            slangMap.replace(word, newSlang);
+        else {
+            slangMap.remove(word);
+            slangMap.put(newSlang.getWord(), newSlang);
+        }
+        writeFile();
     }
 
     public void reset() {
-
+        slangMap.clear();
+        readFile("data/slang_copy.txt");
+        writeFile();
     }
 
     public ArrayList<Slang> randomSlang(int number) {
