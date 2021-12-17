@@ -1,6 +1,8 @@
 package Slang;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Slang
@@ -8,9 +10,9 @@ import java.util.ArrayList;
  * Date 12/17/2021 - 8:55 PM
  * Description: ...
  */
-public class Slang {
+public class Slang implements Serializable {
     private String word;
-    private ArrayList<String> definitionList;
+    private ArrayList<String> definitionList = new ArrayList<>();
 
     public Slang(String word) {
         this.word = word;
@@ -19,7 +21,6 @@ public class Slang {
     public Slang(String word, String definition) {
         this.word = word;
         if (definition != null) {
-            assert false;
             definitionList.add(definition);
         }
     }
@@ -56,11 +57,12 @@ public class Slang {
         if (part.length != 2) {
             return null;
         }
-        Slang slang = new Slang(part[0]);
 
-        String[] defi = part[1].split("\\|");
-        for (String d : defi) slang.addDefinition(d);
-        return slang;
+        return new Slang(part[0], Arrays.toString(part[1].split("\\|")));
+    }
+
+    public void addDefinition(ArrayList<String> definitionList) {
+        this.definitionList.addAll(definitionList);
     }
 
     public void addDefinition(String definition) {
