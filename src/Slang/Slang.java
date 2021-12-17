@@ -1,5 +1,7 @@
 package Slang;
 
+import java.util.ArrayList;
+
 /**
  * Slang
  * Created by Hieu Tran Trung
@@ -8,32 +10,44 @@ package Slang;
  */
 public class Slang {
     private String word;
-    private String definition;
+    private ArrayList<String> definitionList;
+
+    public Slang(String word) {
+        this.word = word;
+    }
 
     public Slang(String word, String definition) {
         this.word = word;
-        this.definition = definition;
+        if (definition != null) {
+            assert false;
+            definitionList.add(definition);
+        }
     }
 
-    public String getKey() {
+    public String getWord() {
         return word;
     }
 
-    public void setKey(String word) {
+    public ArrayList<String> getDefinitionList() {
+        return definitionList;
+    }
+
+    public void setDefinitionList(ArrayList<String> definitionList) {
+        this.definitionList = definitionList;
+    }
+
+    public void setWord(String word) {
         this.word = word;
-    }
-
-    public String getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(String definition) {
-        this.definition = definition;
     }
 
     @Override
     public String toString() {
-        return word + "`" + definition;
+        StringBuilder str = new StringBuilder(word + "`");
+        for (int i = 0; i < definitionList.size(); i++) {
+            str.append(definitionList.get(i));
+            if (i != definitionList.size() - 1) str.append("|");
+        }
+        return str.toString();
     }
 
     public static Slang fromString(String str) {
@@ -42,7 +56,14 @@ public class Slang {
         if (part.length != 2) {
             return null;
         }
+        Slang slang = new Slang(part[0]);
 
-        return new Slang(part[0], part[1]);
+        String[] defi = part[1].split("\\|");
+        for (String d : defi) slang.addDefinition(d);
+        return slang;
+    }
+
+    public void addDefinition(String definition) {
+        definitionList.add(definition);
     }
 }

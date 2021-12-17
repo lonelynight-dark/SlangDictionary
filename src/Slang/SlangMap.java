@@ -3,6 +3,8 @@ package Slang;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
 
 /**
  * Slang
@@ -27,7 +29,7 @@ public class SlangMap implements Serializable {
             while ((line = bw.readLine()) != null) {
                 Slang slang = Slang.fromString(line);
                 if (slang != null) {
-                    slangMap.put(slang.getKey(), slang);
+                    slangMap.put(slang.getWord(), slang);
                 }
             }
 
@@ -38,7 +40,21 @@ public class SlangMap implements Serializable {
     }
 
     private void writeFile() {
+        String file_in = "/data/slang.txt";
+        try {
+            BufferedWriter bw = new BufferedWriter(
+                    new OutputStreamWriter(
+                    new FileOutputStream(file_in)));
 
+
+            for (Slang value: slangMap.values()) {
+
+            }
+
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void loadDataStructure() throws IOException, ClassNotFoundException {
@@ -56,27 +72,26 @@ public class SlangMap implements Serializable {
     }
 
     public Slang searchByKey(String word) {
-        Slang res = new Slang("abc", "cbd");
-
-        return res;
+        return slangMap.get(word);
     }
 
     public ArrayList<Slang> searchByDefinition(String keyword) {
         ArrayList<Slang> res = new ArrayList<>();
 
+
         return res;
     }
 
     public void add(Slang newSlang, int mode) {
-
+        slangMap.put(newSlang.getWord(), newSlang);
     }
 
     public void delete(String word) {
-
+        slangMap.remove(word);
     }
 
-    public void edit(Slang oldSlang, Slang newSlang) {
-
+    public void edit(String word, Slang newSlang) {
+        slangMap.replace(word, newSlang);
     }
 
     public void reset() {
@@ -84,8 +99,16 @@ public class SlangMap implements Serializable {
     }
 
     public ArrayList<Slang> randomSlang(int number) {
+        if (number <= 0) return null;
+
         ArrayList<Slang> res = new ArrayList<>();
 
+        for (int i = 0; i < number; i++) {
+            Object[] ketArray = slangMap.keySet().toArray();
+            Object randomKey = ketArray[new Random().nextInt(ketArray.length)];
+
+            res.add(slangMap.get(randomKey));
+        }
 
         return res;
     }
