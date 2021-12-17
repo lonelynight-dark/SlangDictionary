@@ -5041,7 +5041,7 @@ P.I.C.`Partner In Crime
 P/U`Pick Up
 P/X`Part exchange
 P12`Childish person
-P2C2E`Process Too Complicated To Explain
+P2C2E`Slang Too Complicated To Explain
 P2P`Peer To Peer| Pay To Play
 P2W`Pay To Win
 P45`Employment severance form
