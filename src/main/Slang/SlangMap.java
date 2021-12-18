@@ -1,11 +1,11 @@
-package Slang;
+package main.Slang;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Slang
+ * com.GUI.Slang
  * Created by Hieu Tran Trung
  * Date 12/15/2021 - 6:14 PM
  * Description: ...
@@ -17,7 +17,7 @@ public class SlangMap implements Serializable {
         try {
             loadDataStructure(); // load data structure
         } catch (IOException e) {
-            String file_in = "data/slang.txt";
+            String file_in = "src/resources/data/slang.txt";
             readFile(file_in); // first run need to load from file
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -48,7 +48,7 @@ public class SlangMap implements Serializable {
     }
 
     private void writeFile(boolean isAppend, Slang newSlang) {
-        String file_out = "data/slang.txt";
+        String file_out = "src/resources/data/slang.txt";
         try {
             BufferedWriter bw = new BufferedWriter(
                     new OutputStreamWriter(
@@ -70,14 +70,14 @@ public class SlangMap implements Serializable {
     }
 
     private void loadDataStructure() throws IOException, ClassNotFoundException {
-        String file_in = "data/data.dat";
+        String file_in = "src/resources/data/data.dat";
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file_in));
         slangMap = (HashMap<String, Slang>) ois.readObject();
         ois.close();
     }
 
     public void saveDataStructure() throws IOException {
-        String file_out = "data/data.dat";
+        String file_out = "src/resources/data/data.dat";
         ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file_out));
         oos.writeObject(slangMap);
         oos.close();
@@ -135,7 +135,7 @@ public class SlangMap implements Serializable {
 
     public void reset() {
         slangMap.clear();
-        readFile("data/slang_copy.txt");
+        readFile("src/resources/data/slang_copy.txt");
         writeFile();
     }
 

@@ -2822,7 +2822,7 @@ FIG JAM`F*** I'm Good Just Ask Me
 SHIRT LIFTER`Homosexual Male
 DU JOUR`Of the day
 FPS`First-Person Shooter
-P2C2E`Slang Too Complicated To Explain
+P2C2E`com.GUI.Slang Too Complicated To Explain
 SWMBO`She Who Must Be Obeyed
 G2B`Go To Bed
 WRT`With Regard To

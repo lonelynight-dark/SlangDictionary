@@ -1,12 +1,11 @@
-package Slang;
+package main.Slang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * Slang
+ * com.GUI.Slang
  * Created by Hieu Tran Trung
  * Date 12/17/2021 - 8:55 PM
  * Description: ...
