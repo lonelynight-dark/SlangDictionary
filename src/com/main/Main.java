@@ -24,15 +24,18 @@ public class Main {
         else
             System.out.println(slang.getDefinitionList());
 
-        //System.out.println(slangMap.searchByDefinition("ool"));
-
-        //slangMap.reset();
+        /*
+        System.out.println(slangMap.searchByDefinition("ool"));
+        slangMap.reset();
+        */
 
         System.out.println(slangMap.randomSlang(4));
 
-//        slangMap.add(new Slang("ABCXYZ", "No meaning"), true);
-//        slangMap.add(new Slang("ABCXYZ", "No meaning 2"), false);
-//        slangMap.add(new Slang("ABCXYZ", "No meaning 3"), false);
+/*
+        slangMap.add(new Slang("ABCXYZ", "No meaning"), true);
+        slangMap.add(new Slang("ABCXYZ", "No meaning 2"), false);
+        slangMap.add(new Slang("ABCXYZ", "No meaning 3"), false);
+*/
 
         try {
             slangMap.saveDataStructure();
