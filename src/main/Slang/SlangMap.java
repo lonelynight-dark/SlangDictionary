@@ -83,8 +83,8 @@ public class SlangMap implements Serializable {
         oos.close();
     }
 
-    public Slang searchByKey(String word) {
-        return slangMap.get(word.toUpperCase());
+    public Object[] searchByKey(String word) {
+        return new Slang[]{slangMap.get(word.toUpperCase())};
     }
 
     public ArrayList<Slang> searchByDefinition(String keyword) {

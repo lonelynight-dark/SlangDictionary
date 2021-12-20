@@ -1,13 +1,12 @@
 package main.GUI;
 
+import main.Slang.SlangMap;
+
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 /**
  * com.GUI
@@ -25,7 +24,7 @@ public class SlangApp {
     private JButton searchButton;
     private JRadioButton byWordRadioButton;
     private JRadioButton byDefinitionRadioButton;
-    private JList wordList;
+    private JList<Object> wordList;
     private JTextPane definitionTextPane;
     private JPanel wordDayPanel;
     private JPanel historyPanel;
@@ -36,32 +35,14 @@ public class SlangApp {
     private JButton resetButton;
     private JList historyList;
     private JButton deleteAllHistoryButton;
-    private JComboBox searchComboBox;
     private JTextPane newDayTextPane;
     private JToolBar homeToolBar;
+    private JTextField searchTextField;
 
     private boolean isSearchByWord = true;
 
-    public SlangApp() {
-        final JTextComponent searchTextComponent = (JTextComponent) searchComboBox.getEditor().getEditorComponent();
-        searchTextComponent.getDocument().addDocumentListener(new DocumentListener() {
+    public SlangApp(SlangMap slangMap) {
 
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-
-            }
-
-        });
         wordList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -100,11 +81,23 @@ public class SlangApp {
                 }
             }
         });
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!searchTextField.getText().isBlank()) {
+
+                    if (byWordRadioButton.isSelected()) {
+                        wordList.setListData(slangMap.searchByKey(searchTextField.getText()));
+                    }
+
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Slang Dictionary App");
-        frame.setContentPane(new SlangApp().MainPanel);
+        frame.setContentPane(new SlangApp(new SlangMap()).MainPanel);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         ;
