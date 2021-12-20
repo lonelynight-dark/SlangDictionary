@@ -34,7 +34,10 @@
                     <children>
                       <grid id="903af" layout-manager="BorderLayout" hgap="0" vgap="0">
                         <constraints border-constraint="West"/>
-                        <properties/>
+                        <properties>
+                          <minimumSize width="200" height="155"/>
+                          <preferredSize width="200" height="155"/>
+                        </properties>
                         <border type="none"/>
                         <children>
                           <grid id="ba9b8" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -43,16 +46,22 @@
                             <properties/>
                             <border type="none" title="Word list"/>
                             <children>
-                              <component id="4c324" class="javax.swing.JList" binding="wordList">
+                              <scrollpane id="75ce4">
                                 <constraints>
-                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                                    <preferred-size width="150" height="50"/>
-                                  </grid>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                                 </constraints>
-                                <properties>
-                                  <layoutOrientation value="0"/>
-                                </properties>
-                              </component>
+                                <properties/>
+                                <border type="none"/>
+                                <children>
+                                  <component id="4c324" class="javax.swing.JList" binding="wordList">
+                                    <constraints/>
+                                    <properties>
+                                      <layoutOrientation value="0"/>
+                                      <selectionMode value="0"/>
+                                    </properties>
+                                  </component>
+                                </children>
+                              </scrollpane>
                             </children>
                           </grid>
                         </children>
@@ -67,10 +76,19 @@
                             <properties/>
                             <border type="none" title="Definition"/>
                             <children>
-                              <component id="10d21" class="javax.swing.JTextPane" binding="definitionTextPane">
+                              <scrollpane id="14f75">
                                 <constraints border-constraint="Center"/>
                                 <properties/>
-                              </component>
+                                <border type="none"/>
+                                <children>
+                                  <component id="10d21" class="javax.swing.JTextPane" binding="definitionTextPane">
+                                    <constraints/>
+                                    <properties>
+                                      <editable value="false"/>
+                                    </properties>
+                                  </component>
+                                </children>
+                              </scrollpane>
                             </children>
                           </grid>
                         </children>
@@ -237,11 +255,35 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="5e02a" layout-manager="BorderLayout" hgap="0" vgap="0">
-                <constraints border-constraint="Center"/>
+              <grid id="155a2" binding="wordDayPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints border-constraint="North"/>
                 <properties/>
-                <border type="none"/>
-                <children/>
+                <border type="bevel-raised"/>
+                <children>
+                  <grid id="d7f1" binding="gridPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="2" vgap="2">
+                    <margin top="20" left="5" bottom="20" right="5"/>
+                    <constraints border-constraint="North"/>
+                    <properties/>
+                    <border type="none" title="WORD OF THE DAY"/>
+                    <children>
+                      <vspacer id="f68a2">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                      </vspacer>
+                      <component id="50497" class="javax.swing.JTextPane" binding="newDayTextPane">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="50"/>
+                          </grid>
+                        </constraints>
+                        <properties>
+                          <text value=""/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
               </grid>
             </children>
           </grid>
@@ -277,7 +319,9 @@
                       </component>
                       <grid id="ef4ca" layout-manager="BorderLayout" hgap="0" vgap="0">
                         <constraints border-constraint="Center"/>
-                        <properties/>
+                        <properties>
+                          <preferredSize width="210" height="151"/>
+                        </properties>
                         <border type="none" title="Word List"/>
                         <children>
                           <scrollpane id="e15bb">
@@ -297,32 +341,29 @@
                   </grid>
                 </children>
               </grid>
-              <grid id="6ccf7" binding="wordDayPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="12cef" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints border-constraint="Center"/>
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <grid id="ae6e5" binding="gridPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="2" vgap="2">
-                    <margin top="20" left="5" bottom="20" right="5"/>
-                    <constraints border-constraint="North"/>
+                  <grid id="6e7f9" layout-manager="BorderLayout" hgap="0" vgap="0">
+                    <constraints border-constraint="Center"/>
                     <properties/>
-                    <border type="bevel-lowered" title="WORD OF THE DAY"/>
+                    <border type="none" title="Definition"/>
                     <children>
-                      <vspacer id="cbbe1">
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                      </vspacer>
-                      <component id="8a2f9" class="javax.swing.JTextPane" binding="newDayTextPane">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <preferred-size width="150" height="50"/>
-                          </grid>
-                        </constraints>
-                        <properties>
-                          <text value=""/>
-                        </properties>
-                      </component>
+                      <scrollpane id="8db39">
+                        <constraints border-constraint="Center"/>
+                        <properties/>
+                        <border type="none"/>
+                        <children>
+                          <component id="f5704" class="javax.swing.JTextPane" binding="definitionHistoryTextPane">
+                            <constraints/>
+                            <properties>
+                              <editable value="false"/>
+                            </properties>
+                          </component>
+                        </children>
+                      </scrollpane>
                     </children>
                   </grid>
                 </children>

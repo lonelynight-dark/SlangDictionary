@@ -5,11 +5,15 @@ import main.Slang.SlangMap;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * com.GUI
@@ -22,37 +26,86 @@ public class SlangApp {
     private JTabbedPane tabbedPane1;
     private JPanel HomePanel;
     private JPanel QuizPanel;
-    private JPanel gridPanel;
     private JPanel searchPanel;
     private JButton searchButton;
     private JRadioButton byWordRadioButton;
     private JRadioButton byDefinitionRadioButton;
     private JList<String> wordList;
     private JTextPane definitionTextPane;
-    private JPanel wordDayPanel;
     private JPanel historyPanel;
     private JPanel exitPanel;
     private JButton addButton;
     private JButton editButton;
     private JButton deleteButton;
     private JButton resetButton;
-    private JList historyList;
+    private JList<String> historyList;
     private JButton deleteAllHistoryButton;
     private JTextPane newDayTextPane;
     private JToolBar homeToolBar;
     private JTextField searchTextField;
+    private JPanel wordDayPanel;
+    private JPanel gridPanel;
+    private JTextPane definitionHistoryTextPane;
+    private JPanel quizPanel;
 
     private boolean isSearchByWord = true;
-    private SlangMap slangFound = new SlangMap(true);
-
+    private final ArrayList<Slang> slangArrayList = new ArrayList<>();
+    private final ArrayList<Slang> historyWord = new ArrayList<>();
     public SlangApp(SlangMap slangMap) {
-        DefaultListModel<String> listModel = new DefaultListModel<>();
-        wordList.setModel(listModel);
+        JPanel newPanel = new QuizBegin();
+        System.out.println(newPanel.getComponentCount());
+        QuizPanel.add(newPanel, BorderLayout.CENTER);
+
+        displaySlang(newDayTextPane, slangMap.randomSlang(1).get(0));
+        loadHistory();
+        DefaultListModel<String> historyListModel = new DefaultListModel<>();
+        historyList.setModel(historyListModel);
+        tabbedPane1.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+
+                JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+                int index = sourceTabbedPane.getSelectedIndex();
+                if (index == 2) { // History tab
+                    historyListModel.clear();
+                    if (historyWord.size() != 0 && historyWord.get(0) != null) {
+                        for (Slang slang: historyWord) {
+                            historyListModel.addElement(slang.getWord());
+                            historyList.setSelectedIndex(0);
+                            wordList.setSelectedIndex(0);
+                        }
+                        wordList.grabFocus();
+                    }
+                    else {
+                        historyListModel.addElement("Empty history!");
+                        definitionHistoryTextPane.setText("No chosen word :(");
+                    }
+                }
+                if (index == 3) { // Exit tab
+                    JComponent comp = (JComponent) e.getSource();
+                    if (JOptionPane.showConfirmDialog(comp,
+                            "Do you really want to exit?", "Closing Window",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                        Window win = SwingUtilities.getWindowAncestor(comp);
+                        win.dispose();
+                    }
+                }
+            }
+        });
+
+        // home tab
+        DefaultListModel<String> wordListModel = new DefaultListModel<>();
+        wordList.setModel(wordListModel);
 
         wordList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-
+                int index = wordList.getSelectedIndex();
+                if (index != -1) {
+                    Slang slang = slangArrayList.get(index);
+                    displaySlang(definitionTextPane, slang);
+                }
             }
         });
         byWordRadioButton.addActionListener(new ActionListener() {
@@ -69,24 +122,6 @@ public class SlangApp {
                 isSearchByWord = false;
             }
         });
-        tabbedPane1.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-
-                JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-                int index = sourceTabbedPane.getSelectedIndex();
-                if (index == 3) { // Exit tab
-                    JComponent comp = (JComponent) e.getSource();
-                    if (JOptionPane.showConfirmDialog(comp,
-                            "Do you really want to exit?", "Closing Window",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
-                        Window win = SwingUtilities.getWindowAncestor(comp);
-                        win.dispose();
-                    }
-                }
-            }
-        });
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,31 +129,67 @@ public class SlangApp {
                     slangArrayList.clear();
                     if (byWordRadioButton.isSelected()) {
                         slangArrayList.add(slangMap.searchByKey(searchTextField.getText()));
+                        saveHistory(slangArrayList.get(0));
                     }
                     else {
                         slangArrayList.addAll(slangMap.searchByDefinition(searchTextField.getText()));
                     }
 
+                    wordListModel.clear();
                     if (slangArrayList.size() != 0 && slangArrayList.get(0) != null) {
-                        listModel.clear();
                         for (Slang slang: slangArrayList) {
-                            listModel.addElement(slang.getWord());
+                            wordListModel.addElement(slang.getWord());
                             wordList.setSelectedIndex(0);
                         }
+                        wordList.grabFocus();
                     }
+                    else {
+                        wordListModel.addElement("No result found!");
+                        definitionTextPane.setText("No result found!");
+                    }
+                }
+            }
+        });
 
+        // history tab
+        deleteAllHistoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearHistory();
+                historyListModel.clear();
+                historyListModel.addElement("Empty history!");
+                definitionHistoryTextPane.setText("No chosen word :(");
+            }
+        });
+        historyList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int index = historyList.getSelectedIndex();
+                if (index != -1) {
+                    Slang slang = historyWord.get(index);
+                    displaySlang(definitionHistoryTextPane, slang);
                 }
             }
         });
     }
 
     public static void main(String[] args) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
+        SlangMap slangMap = new SlangMap();
         JFrame frame = new JFrame("Slang Dictionary App");
-        frame.setContentPane(new SlangApp(new SlangMap(false)).MainPanel);
+        frame.setContentPane(new SlangApp(slangMap).MainPanel);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
-        ;
-        frame.setBounds(200, 100, 1200, 600);
+        frame.setBounds(200, 100, 600, 400);
         frame.setVisible(true);
 
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -128,9 +199,89 @@ public class SlangApp {
                         "Do you really want to exit?", "Closing Window",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                    try {
+                        slangMap.saveDataStructure();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     System.exit(0);
                 }
             }
         });
+    }
+
+    public void displaySlang(JTextPane textPane, Slang slang) {
+        SimpleAttributeSet wordStyle = new SimpleAttributeSet();
+        StyleConstants.setBold(wordStyle, true);
+
+        // Show bold word
+        textPane.setCharacterAttributes(wordStyle, true);
+        textPane.setText("Slang: " + slang.getWord() + "\n");
+
+        // show list of meaning
+        SimpleAttributeSet meaningStyle = new SimpleAttributeSet();
+        StyleConstants.setItalic(meaningStyle, true);
+
+        Document doc = textPane.getStyledDocument();
+        String[] slangDefi = slang.getDefinitionList().toArray(new String[0]);
+        for (int i = 0; i < slangDefi.length; i++) {
+            try {
+                doc.insertString(doc.getLength(), "  - Meaning " + (i + 1) + " : " +
+                        slangDefi[i].trim() + "\n" , meaningStyle);
+            } catch (BadLocationException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void loadHistory() {
+        String file_in = "src/resources/data/history.txt";
+        try {
+            BufferedReader bw = new BufferedReader(new InputStreamReader
+                    (new FileInputStream(file_in)));
+
+            String line;
+            while ((line = bw.readLine()) != null) {
+                Slang slang = Slang.fromString(line);
+                if (slang != null) {
+                    historyWord.add(slang);
+                }
+            }
+
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveHistory(Slang newSlang) {
+        if (historyWord.contains(newSlang))
+            return;
+
+        historyWord.add(newSlang);
+        String file_out = "src/resources/data/history.txt";
+        try {
+            BufferedWriter bw = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(file_out, true)));
+            bw.write(newSlang.toString());
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearHistory() {
+        historyWord.clear();
+        String file_out = "src/resources/data/history.txt";
+        try {
+            BufferedWriter bw = new BufferedWriter(
+                    new OutputStreamWriter(
+                            new FileOutputStream(file_out)));
+            bw.write("");
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
