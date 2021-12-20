@@ -13,14 +13,16 @@ import java.util.regex.Pattern;
 public class SlangMap implements Serializable {
     private HashMap<String, Slang> slangMap = new HashMap<>();
 
-    public SlangMap() {
-        try {
-            loadDataStructure(); // load data structure
-        } catch (IOException e) {
-            String file_in = "src/resources/data/slang.txt";
-            readFile(file_in); // first run need to load from file
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+    public SlangMap(boolean emptySlang) {
+        if (!emptySlang) {
+            try {
+                loadDataStructure(); // load data structure
+            } catch (IOException e) {
+                String file_in = "src/resources/data/slang.txt";
+                readFile(file_in); // first run need to load from file
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -83,8 +85,8 @@ public class SlangMap implements Serializable {
         oos.close();
     }
 
-    public Object[] searchByKey(String word) {
-        return new Slang[]{slangMap.get(word.toUpperCase())};
+    public Slang searchByKey(String word) {
+        return slangMap.get(word.toUpperCase());
     }
 
     public ArrayList<Slang> searchByDefinition(String keyword) {

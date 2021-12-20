@@ -1,5 +1,6 @@
 package main.GUI;
 
+import main.Slang.Slang;
 import main.Slang.SlangMap;
 
 import javax.swing.*;
@@ -7,6 +8,8 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * com.GUI
@@ -24,7 +27,7 @@ public class SlangApp {
     private JButton searchButton;
     private JRadioButton byWordRadioButton;
     private JRadioButton byDefinitionRadioButton;
-    private JList<Object> wordList;
+    private JList<String> wordList;
     private JTextPane definitionTextPane;
     private JPanel wordDayPanel;
     private JPanel historyPanel;
@@ -40,8 +43,11 @@ public class SlangApp {
     private JTextField searchTextField;
 
     private boolean isSearchByWord = true;
+    private SlangMap slangFound = new SlangMap(true);
 
     public SlangApp(SlangMap slangMap) {
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        wordList.setModel(listModel);
 
         wordList.addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -85,9 +91,20 @@ public class SlangApp {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!searchTextField.getText().isBlank()) {
-
+                    slangArrayList.clear();
                     if (byWordRadioButton.isSelected()) {
-                        wordList.setListData(slangMap.searchByKey(searchTextField.getText()));
+                        slangArrayList.add(slangMap.searchByKey(searchTextField.getText()));
+                    }
+                    else {
+                        slangArrayList.addAll(slangMap.searchByDefinition(searchTextField.getText()));
+                    }
+
+                    if (slangArrayList.size() != 0 && slangArrayList.get(0) != null) {
+                        listModel.clear();
+                        for (Slang slang: slangArrayList) {
+                            listModel.addElement(slang.getWord());
+                            wordList.setSelectedIndex(0);
+                        }
                     }
 
                 }
@@ -97,7 +114,7 @@ public class SlangApp {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Slang Dictionary App");
-        frame.setContentPane(new SlangApp(new SlangMap()).MainPanel);
+        frame.setContentPane(new SlangApp(new SlangMap(false)).MainPanel);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         ;
