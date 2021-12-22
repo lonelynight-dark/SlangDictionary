@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * Description: ...
  */
 public class SlangApp {
+    private static SlangMap slangMap;
     private JPanel MainPanel;
     private JTabbedPane tabbedPane1;
     private JPanel HomePanel;
@@ -47,12 +48,14 @@ public class SlangApp {
     private JPanel gridPanel;
     private JTextPane definitionHistoryTextPane;
     private JPanel quizPanel;
+    private JFrame frame;
 
     private boolean isSearchByWord = true;
     private final ArrayList<Slang> slangArrayList = new ArrayList<>();
     private final ArrayList<Slang> historyWord = new ArrayList<>();
-    public SlangApp(SlangMap slangMap) {
-        JPanel newPanel = new QuizBegin();
+    public SlangApp(JFrame frame, SlangMap slangMap) {
+        this.frame = frame;
+        JPanel newPanel = new QuizBegin(slangMap);
         System.out.println(newPanel.getComponentCount());
         QuizPanel.add(newPanel, BorderLayout.CENTER);
 
@@ -128,8 +131,11 @@ public class SlangApp {
                 if (!searchTextField.getText().isBlank()) {
                     slangArrayList.clear();
                     if (byWordRadioButton.isSelected()) {
-                        slangArrayList.add(slangMap.searchByKey(searchTextField.getText()));
-                        saveHistory(slangArrayList.get(0));
+                        Slang slang = slangMap.searchByKey(searchTextField.getText());
+                        if (slang != null) {
+                            slangArrayList.add(slang);
+                            saveHistory(slangArrayList.get(0));
+                        }
                     }
                     else {
                         slangArrayList.addAll(slangMap.searchByDefinition(searchTextField.getText()));
@@ -171,6 +177,37 @@ public class SlangApp {
                 }
             }
         });
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JDialog addDialog = addSlang(frame);
+                addDialog.setTitle("Add a slang");
+                addDialog.setLocationRelativeTo(searchPanel);
+                addDialog.pack();
+                addDialog.setVisible(true);
+            }
+        });
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = wordList.getSelectedIndex();
+                if (index != -1) {
+                    Slang slang = slangArrayList.get(index);
+                    int confirm = JOptionPane.showConfirmDialog(HomePanel, "Do you really want to delete this slang '" +
+                            slang.getWord() + "' ?", "Delete a slang", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        wordListModel.removeElement(slang);
+                        slangArrayList.remove(slang);
+                        slangMap.delete(slang.getWord());
+                        wordList.repaint();
+                    }
+                }
+                else {
+                    JOptionPane.showMessageDialog(HomePanel, "Choose a slang first!",
+                            "Delete a slang", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -184,9 +221,9 @@ public class SlangApp {
         } catch (Exception e) {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
-        SlangMap slangMap = new SlangMap();
+        slangMap = new SlangMap();
         JFrame frame = new JFrame("Slang Dictionary App");
-        frame.setContentPane(new SlangApp(slangMap).MainPanel);
+        frame.setContentPane(new SlangApp(frame, slangMap).MainPanel);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.pack();
         frame.setBounds(200, 100, 600, 400);
@@ -283,5 +320,76 @@ public class SlangApp {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public JDialog addSlang(Frame frame) {
+        JDialog addDialog = new JDialog(frame);
+        JLabel name = new JLabel("      Slang:");
+        JTextField wordTextField = new JTextField();
+        JPanel wordPanel = new JPanel();
+        wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.LINE_AXIS));
+        wordPanel.add(name);
+        wordPanel.add(wordTextField);
+        wordPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+        JLabel meaning = new JLabel("Definition:");
+        JTextArea definitionTextArea = new JTextArea("");
+        definitionTextArea.setPreferredSize(new Dimension(0, 100));
+        JScrollPane scrollPane = new JScrollPane(definitionTextArea);
+        JPanel meaningPanel = new JPanel();
+        meaningPanel.setLayout(new BoxLayout(meaningPanel, BoxLayout.LINE_AXIS));
+        meaningPanel.add(meaning);
+        meaningPanel.add(scrollPane);
+        meaningPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+        JButton addBtn = new JButton("Add");
+        JButton cancelBtn = new JButton("Cancel");
+        addBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] defiList = definitionTextArea.getText().split("\n");
+                Slang newSlang = new Slang(wordTextField.getText(), defiList);
+
+                if (slangMap.searchByKey(newSlang.getWord()) != null) {
+                    int confirm = JOptionPane.showOptionDialog(HomePanel, "This slang: '" + newSlang.getWord()
+                                    + "' already exists. Do you want to override or duplicate this word?", "Slang exists",
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                            new Object[] { "Override", "Duplicate" , "Cancel"}, JOptionPane.YES_OPTION);
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        slangMap.add(newSlang, true);
+                        JOptionPane.showMessageDialog(addDialog, "Add successfully");
+                        addDialog.dispose();
+                    }
+                    else if (confirm == JOptionPane.NO_OPTION ){
+                        slangMap.add(newSlang, false);
+                        JOptionPane.showMessageDialog(addDialog, "Add successfully");
+                        addDialog.dispose();
+                    }
+                }
+                else {
+                    slangMap.add(newSlang, true);
+                    JOptionPane.showMessageDialog(addDialog, "Add successfully");
+                }
+
+            }
+        });
+        cancelBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDialog.dispose();
+            }
+        });
+        JPanel btnPanel = new JPanel();
+        btnPanel.setLayout(new FlowLayout());
+        btnPanel.add(Box.createRigidArea(new Dimension(120, 0)));
+        btnPanel.add(addBtn);
+        btnPanel.add(cancelBtn);
+
+        addDialog.add(wordPanel, BorderLayout.NORTH);
+        addDialog.add(meaningPanel, BorderLayout.CENTER);
+        addDialog.add(btnPanel, BorderLayout.SOUTH);
+
+        return addDialog;
     }
 }

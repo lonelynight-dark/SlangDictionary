@@ -1,9 +1,12 @@
 package main.GUI;
 
+import main.Slang.SlangMap;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * main.GUI
@@ -20,14 +23,19 @@ public class QuizBegin extends JPanel {
     private JPanel textPanel;
     private JPanel controlPanel;
     private JPanel smallerControlPanel;
+    private QuizQuestion quizQuestion;
 
     private boolean isWord = true;
 
-    public QuizBegin() {
+    public QuizBegin(SlangMap slangMap) {
         this.add(mainPanel);
         mainPanel.add(textPanel, BorderLayout.NORTH);
         mainPanel.add(controlPanel, BorderLayout.CENTER);
         controlPanel.add(smallerControlPanel, BorderLayout.CENTER);
+        //quizQuestion = new QuizQuestion(slangMap, isWord);
+
+
+        //quizQuestion.setVisible(false);
         wordQuestionRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,10 +53,19 @@ public class QuizBegin extends JPanel {
         STARTButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                quizQuestion = new QuizQuestion(slangMap, isWord);
+                add(quizQuestion, BorderLayout.CENTER);
+                mainPanel.setVisible(false);
+                quizQuestion.setVisible(true);
+                quizQuestion.addQuizListener(new QuizListener() {
+                    @Override
+                    public void finish() {
+                        quizQuestion.setVisible(false);
+                        mainPanel.setVisible(true);
+                    }
+                });
             }
         });
     }
 
-    public
 }

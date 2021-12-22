@@ -1,2 +1,14 @@
-//`Love| I love you
-ABC`American Born Chinese
+BAC`Back At Computer| Blood Alcohol Content| By Any Chance
+ABCDE`ABC|ABCD|ACE
+ABCDE`ABC nghia 1|ABC meaning 2
+ABCDE`ABC nghia 1|ABC meaning 2
+ABCDE`ABC nghia 1|ABC meaning 2
+ABCDE`Meaning 1
+ABCDE`Meaning 1|Meaning 2
+ABCDE`
+ABCDE`asdas
+ABC`American Born Chinese|lovely
+ABCDE`
+ABCDE`adsasdas
+ABCDE`asdas
+ABCDE`Meaning 2
