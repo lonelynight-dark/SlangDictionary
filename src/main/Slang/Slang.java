@@ -20,7 +20,10 @@ public class Slang implements Serializable {
 
     public Slang(String word, String[] definitionList) {
         this.word = word;
-        Collections.addAll(this.definitionList, definitionList);
+        for (int i = 0; i < definitionList.length; ++i) {
+            if (!definitionList[i].isBlank())
+                this.definitionList.add(definitionList[i]);
+        }
     }
 
     public Slang(String word, String definition) {

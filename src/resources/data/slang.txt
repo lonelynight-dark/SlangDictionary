@@ -7093,7 +7093,7 @@ AAT`And Another Thing| At All Times
 RCH`A very small unit of measurement
 SAVVY`Do you understand?| Knowledgeable| well informed
 TIGHT`Close| Miserly
-ABC`American Born Chinese|lovely
+ABC`American Born Chinese
 RCT`Roller Coster Tycoon
 ABD`Already Been Done
 DOWNER`Someone or something that brings the mood down
@@ -7638,4 +7638,3 @@ BAU`Business As Usual
 SCH`School
 BAY`Baby
 SCO`San Fransisco
-ABCDE`Meaning 1|Meaning 2	M

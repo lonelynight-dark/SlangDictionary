@@ -30,6 +30,8 @@ public class QuizQuestion extends JPanel implements ActionListener {
     private JPanel questionPanel;
     private JPanel answerPanel;
     private JPanel controlPanel;
+    private JLabel titleLabel;
+    private JLabel scoreLabel;
 
     private int score = 0;
     private int nQuestion = 0;
@@ -41,14 +43,20 @@ public class QuizQuestion extends JPanel implements ActionListener {
         MainPanel.add(answerPanel, BorderLayout.CENTER);
         MainPanel.add(controlPanel, BorderLayout.SOUTH);
 
+
+        if (isWordQuestion) {
+
+        }
+
+
         this.setPreferredSize(new Dimension(500, 300));
 
-        generateQuiz(nQuestion, slangMap, isWordQuestion);
+        showQuizGUI(nQuestion, slangMap, isWordQuestion);
 
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                generateQuiz(nQuestion, slangMap, isWordQuestion);
+                showQuizGUI(nQuestion, slangMap, isWordQuestion);
             }
         });
         stopButton.addActionListener(new ActionListener() {
@@ -59,47 +67,71 @@ public class QuizQuestion extends JPanel implements ActionListener {
         });
     }
 
-    private void generateQuiz(int index, SlangMap slangMap, boolean isWordQuestion) {
+    private void generateQuiz(SlangMap slangMap, boolean isWordQuestion) {
+
+    }
+
+    private void showQuizGUI(int index, SlangMap slangMap, boolean isWordQuestion) {
+        ArrayList<Slang> quiz = slangMap.randomSlang(4);
+        int correctIndex = new Random().nextInt(quiz.size());
+        Slang slangCorrect = quiz.get(correctIndex);
+
+        String question;
+        ArrayList<String> answers = new ArrayList<>();
+
+        if (isWordQuestion) {
+            question = slangCorrect.getWord();
+            for (Slang slang : quiz) {
+                ArrayList<String> answerList = slang.getDefinitionList();
+                answers.add(slang.getDefinitionList().get(new Random().nextInt(answerList.size())));
+            }
+        } else {
+            ArrayList<String> answerList = slangCorrect.getDefinitionList();
+            question = slangCorrect.getDefinitionList().get(new Random().nextInt(answerList.size()));
+
+            for (Slang slang : quiz) {
+                answers.add(slang.getWord());
+            }
+        }
+
+        // reset GUI
         aButton.setBackground(new JButton().getBackground());
         bButton.setBackground(new JButton().getBackground());
         cButton.setBackground(new JButton().getBackground());
         dButton.setBackground(new JButton().getBackground());
         nextButton.setEnabled(false);
-        ArrayList<Slang> quiz = slangMap.randomSlang(4);
-        Slang slangCorrect = quiz.get(0);
-        Collections.shuffle(quiz, new Random());
+
         if (isWordQuestion) {
-            questionLabel.setText("Question " + (index + 1) + ": What is the definition of '"
-                    + slangCorrect.getWord() + "'?");
+            titleLabel.setText("Question " + (index + 1) + ": What is the definition of this slang?");
+        } else {
+            titleLabel.setText("Question " + (index + 1) + ": Which slang has this definition?");
+        }
 
-            int i = 0;
-            ArrayList<String> answerA = quiz.get(i++).getDefinitionList();
-            aButton.setText("A. " + answerA.get(new Random().nextInt(answerA.size())));
+        // show quiz question
+        questionLabel.setText(question);
 
-            ArrayList<String> answerB = quiz.get(i++).getDefinitionList();
-            bButton.setText("B. " + answerB.get(new Random().nextInt(answerB.size())));
+        // show quiz answers
+        aButton.setText("A. " + answers.get(0));
+        bButton.setText("B. " + answers.get(1));
+        cButton.setText("C. " + answers.get(2));
+        dButton.setText("D. " + answers.get(3));
 
-            ArrayList<String> answerC = quiz.get(i++).getDefinitionList();
-            cButton.setText("C. " + answerC.get(new Random().nextInt(answerC.size())));
+        aButton.addActionListener(this);
+        bButton.addActionListener(this);
+        cButton.addActionListener(this);
+        dButton.addActionListener(this);
 
-            ArrayList<String> answerD = quiz.get(i++).getDefinitionList();
-            dButton.setText("D. " + answerD.get(new Random().nextInt(answerD.size())));
-
-            aButton.addActionListener(this);
-            bButton.addActionListener(this);
-            cButton.addActionListener(this);
-            dButton.addActionListener(this);
-
-            i = quiz.indexOf(slangCorrect);
-            JButton[] buttons = new JButton[]{aButton, bButton, cButton, dButton};
-            for (int j = 0; j < buttons.length; j++) {
-                if (j == i) {
-                    buttons[j].setActionCommand("Correct");
-                } else {
-                    buttons[j].setActionCommand("Incorrect");
-                }
+        JButton[] buttons = new JButton[]{aButton, bButton, cButton, dButton};
+        for (int j = 0; j < buttons.length; j++) {
+            if (j == correctIndex) {
+                buttons[j].setActionCommand("Correct");
+            } else {
+                buttons[j].setActionCommand("Incorrect");
             }
         }
+
+        // show current score
+        scoreLabel.setText("Your score: " + score + "/" + nQuestion);
     }
 
     public void showResult() {
@@ -129,9 +161,9 @@ public class QuizQuestion extends JPanel implements ActionListener {
         resultPanel.add(returnBtn, BorderLayout.CENTER);
         resultPanel.setAlignmentX(CENTER_ALIGNMENT);
         resultPanel.setAlignmentY(CENTER_ALIGNMENT);
-        resultPanel.setPreferredSize(new Dimension(500,600));
+        resultPanel.setPreferredSize(new Dimension(500, 600));
 
-        MainPanel.add(resultPanel);
+        MainPanel.add(resultPanel, BorderLayout.CENTER);
     }
 
     public void addQuizListener(QuizListener quizListener) {
@@ -145,17 +177,19 @@ public class QuizQuestion extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Correct")) {
-            ((JButton)e.getSource()).setBackground(Color.GREEN);
+            ((JButton) e.getSource()).setBackground(Color.GREEN);
             score++;
         } else {
-            ((JButton)e.getSource()).setBackground(Color.RED);
+            ((JButton) e.getSource()).setBackground(Color.RED);
         }
         nQuestion++;
         nextButton.setEnabled(true);
 
+        scoreLabel.setText("Your score: " + score + "/" + nQuestion);
         aButton.removeActionListener(this);
         bButton.removeActionListener(this);
         cButton.removeActionListener(this);
         dButton.removeActionListener(this);
     }
+
 }

@@ -2,23 +2,23 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="main.GUI.QuizBegin">
   <grid id="27dc6" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="20" y="146" width="638" height="163"/>
+      <xy x="20" y="146" width="645" height="164"/>
     </constraints>
     <properties>
-      <minimumSize width="500" height="150"/>
-      <preferredSize width="500" height="150"/>
+      <minimumSize width="600" height="150"/>
+      <preferredSize width="600" height="200"/>
     </properties>
     <border type="bevel-raised"/>
     <children>
       <grid id="5eb79" binding="controlPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties>
-          <minimumSize width="700" height="150"/>
-          <preferredSize width="700" height="150"/>
+          <minimumSize width="600" height="150"/>
+          <preferredSize width="600" height="150"/>
         </properties>
         <border type="none"/>
         <children>
-          <grid id="fe8fe" binding="smallerControlPanel" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="fe8fe" binding="smallerControlPanel" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints border-constraint="Center"/>
             <properties/>
@@ -33,11 +33,6 @@
                   <text value="Word question"/>
                 </properties>
               </component>
-              <vspacer id="73d97">
-                <constraints>
-                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </vspacer>
               <component id="9e63f" class="javax.swing.JRadioButton" binding="definitionQuestionRadioButton">
                 <constraints>
                   <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -56,19 +51,21 @@
                   <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
-              <component id="ef157" class="javax.swing.JButton" binding="STARTButton" default-binding="true">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="START"/>
-                </properties>
-              </component>
               <hspacer id="180b">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
               </hspacer>
+              <component id="ef157" class="javax.swing.JButton" binding="STARTButton" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="-1" height="50"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <text value="START"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
@@ -90,8 +87,9 @@
             <constraints border-constraint="Center"/>
             <properties>
               <editable value="false"/>
+              <font name="Fira Code" size="14"/>
               <lineWrap value="true"/>
-              <margin top="0" left="5" bottom="0" right="5"/>
+              <margin top="0" left="10" bottom="0" right="10"/>
               <rows value="2"/>
               <text value="You are going to do a slang quiz, in which you will choose 1 of 4 answers: A,B,C or D.&#10;Choose a question mode and click &quot;Start&quot; to begin."/>
             </properties>

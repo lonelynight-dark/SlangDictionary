@@ -39,6 +39,7 @@ public class QuizBegin extends JPanel {
         wordQuestionRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                wordQuestionRadioButton.setSelected(true);
                 definitionQuestionRadioButton.setSelected(false);
                 isWord = true;
             }
@@ -46,6 +47,7 @@ public class QuizBegin extends JPanel {
         definitionQuestionRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                definitionQuestionRadioButton.setSelected(true);
                 wordQuestionRadioButton.setSelected(false);
                 isWord = false;
             }
