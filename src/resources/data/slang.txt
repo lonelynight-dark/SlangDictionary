@@ -1127,7 +1127,7 @@ UB2`You Be Too
 :@`Angry
 :B`Buck teeth
 :C`Very Sad
-:D`Happy|ffsdfsdf|sdfsdf
+:D`Happy
 UAV`Urban Assault Vehicle
 :F`Drooling
 ;(`Crying
@@ -6350,7 +6350,6 @@ BURMA`Be Upstairs Ready My Angel
 YAWA`Person who always uses the 'Away' status in IM systems
 BOWL`Part of a marijuana pipe
 TRICKIN`Spending money on a girl
-Slang`Override meaning
 MOXY`Courage| confidence
 XOXO`Hugs & Kisses
 PROZZIE`Prostitute
@@ -7094,7 +7093,7 @@ AAT`And Another Thing| At All Times
 RCH`A very small unit of measurement
 SAVVY`Do you understand?| Knowledgeable| well informed
 TIGHT`Close| Miserly
-ABC`1a1d6asd|61313|3|3|asdasd|as|d|asd|as|3|3
+ABC`American Born Chinese
 RCT`Roller Coster Tycoon
 ABD`Already Been Done
 DOWNER`Someone or something that brings the mood down

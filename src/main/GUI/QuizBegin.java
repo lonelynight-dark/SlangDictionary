@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 /**
  * main.GUI
@@ -32,10 +31,7 @@ public class QuizBegin extends JPanel {
         mainPanel.add(textPanel, BorderLayout.NORTH);
         mainPanel.add(controlPanel, BorderLayout.CENTER);
         controlPanel.add(smallerControlPanel, BorderLayout.CENTER);
-        //quizQuestion = new QuizQuestion(slangMap, isWord);
 
-
-        //quizQuestion.setVisible(false);
         wordQuestionRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

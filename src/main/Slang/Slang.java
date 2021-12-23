@@ -2,7 +2,6 @@ package main.Slang;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * com.GUI.Slang
@@ -20,9 +19,9 @@ public class Slang implements Serializable {
 
     public Slang(String word, String[] definitionList) {
         this.word = word;
-        for (int i = 0; i < definitionList.length; ++i) {
-            if (!definitionList[i].isBlank())
-                this.definitionList.add(definitionList[i]);
+        for (String s : definitionList) {
+            if (!s.isBlank())
+                this.definitionList.add(s);
         }
     }
 

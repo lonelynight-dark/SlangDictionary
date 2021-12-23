@@ -1,6 +1,5 @@
 package main.GUI;
 
-import main.Main;
 import main.Slang.Slang;
 import main.Slang.SlangMap;
 
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -43,12 +41,6 @@ public class QuizQuestion extends JPanel implements ActionListener {
         MainPanel.add(answerPanel, BorderLayout.CENTER);
         MainPanel.add(controlPanel, BorderLayout.SOUTH);
 
-
-        if (isWordQuestion) {
-
-        }
-
-
         this.setPreferredSize(new Dimension(500, 300));
 
         showQuizGUI(nQuestion, slangMap, isWordQuestion);
@@ -65,10 +57,6 @@ public class QuizQuestion extends JPanel implements ActionListener {
                 showResult();
             }
         });
-    }
-
-    private void generateQuiz(SlangMap slangMap, boolean isWordQuestion) {
-
     }
 
     private void showQuizGUI(int index, SlangMap slangMap, boolean isWordQuestion) {

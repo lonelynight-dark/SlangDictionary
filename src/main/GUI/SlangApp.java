@@ -14,6 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * com.GUI
@@ -48,24 +52,25 @@ public class SlangApp {
     private JPanel gridPanel;
     private JTextPane definitionHistoryTextPane;
     private JPanel quizPanel;
-    private JFrame frame;
+    private final JFrame frame;
     private JDialog addDialog;
     private JDialog editDialog;
 
-    private boolean isSearchByWord = true;
     private final ArrayList<Slang> slangArrayList = new ArrayList<>();
     private final ArrayList<Slang> historyWord = new ArrayList<>();
 
     public SlangApp(JFrame frame, SlangMap slangMap) {
+        // set up components
         this.frame = frame;
         JPanel newPanel = new QuizBegin(slangMap);
-        System.out.println(newPanel.getComponentCount());
         QuizPanel.add(newPanel, BorderLayout.CENTER);
 
-        displaySlang(newDayTextPane, slangMap.randomSlang(1).get(0));
+        // generate on this day word for every 5 minutes
+        generateWord(5);
         loadHistory();
         DefaultListModel<String> historyListModel = new DefaultListModel<>();
         historyList.setModel(historyListModel);
+
         tabbedPane1.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
@@ -125,7 +130,6 @@ public class SlangApp {
             public void actionPerformed(ActionEvent e) {
                 byWordRadioButton.setSelected(true);
                 byDefinitionRadioButton.setSelected(false);
-                isSearchByWord = true;
             }
         });
         byDefinitionRadioButton.addActionListener(new ActionListener() {
@@ -133,7 +137,6 @@ public class SlangApp {
             public void actionPerformed(ActionEvent e) {
                 byDefinitionRadioButton.setSelected(true);
                 byWordRadioButton.setSelected(false);
-                isSearchByWord = false;
             }
         });
         searchButton.addActionListener(new ActionListener() {
@@ -166,28 +169,6 @@ public class SlangApp {
             }
         });
 
-        // history tab
-        deleteAllHistoryButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearHistory();
-                historyListModel.clear();
-                historyListModel.addElement("Empty history!");
-                definitionHistoryTextPane.setText("No chosen word :(");
-            }
-        });
-        historyList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int index = historyList.getSelectedIndex();
-                if (index != -1) {
-                    if (historyWord.size() != 0) {
-                        Slang slang = historyWord.get(index);
-                        displaySlang(definitionHistoryTextPane, slang);
-                    }
-                }
-            }
-        });
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -252,6 +233,29 @@ public class SlangApp {
                 } else {
                     JOptionPane.showMessageDialog(HomePanel, "Please search and choose a slang first!",
                             "Edit a slang", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        // history tab
+        deleteAllHistoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearHistory();
+                historyListModel.clear();
+                historyListModel.addElement("Empty history!");
+                definitionHistoryTextPane.setText("No chosen word :(");
+            }
+        });
+        historyList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int index = historyList.getSelectedIndex();
+                if (index != -1) {
+                    if (historyWord.size() != 0) {
+                        Slang slang = historyWord.get(index);
+                        displaySlang(definitionHistoryTextPane, slang);
+                    }
                 }
             }
         });
@@ -371,8 +375,8 @@ public class SlangApp {
 
     public JDialog addSlang(Frame frame) {
         JDialog addDialog = new JDialog(frame);
-        addDialog.setLocation((int) (frame.getLocation().x + 170),
-                (int) (frame.getLocation().y + 100));
+        addDialog.setLocation(frame.getLocation().x + 170,
+                frame.getLocation().y + 100);
         JLabel name = new JLabel("      Slang:");
         JTextField wordTextField = new JTextField();
         JPanel wordPanel = new JPanel();
@@ -382,8 +386,7 @@ public class SlangApp {
         wordPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         JLabel meaning = new JLabel("Definition:");
-        JTextArea definitionTextArea = new JTextArea("", 10, 10);
-        definitionTextArea.setPreferredSize(new Dimension(0, 100));
+        JTextArea definitionTextArea = new JTextArea("",10,10);
         JScrollPane scrollPane = new JScrollPane(definitionTextArea);
         JPanel meaningPanel = new JPanel();
         meaningPanel.setLayout(new BoxLayout(meaningPanel, BoxLayout.LINE_AXIS));
@@ -452,8 +455,8 @@ public class SlangApp {
 
     public JDialog editSlang(JFrame frame, Slang slang) {
         JDialog editDialog = new JDialog(frame);
-        editDialog.setLocation((int) (frame.getLocation().x + 170),
-                (int) (frame.getLocation().y + 100));
+        editDialog.setLocation(frame.getLocation().x + 170,
+                frame.getLocation().y + 100);
         JLabel name = new JLabel("      Slang:");
         JTextField wordTextField = new JTextField(slang.getWord());
         wordTextField.setEditable(false);
@@ -464,12 +467,11 @@ public class SlangApp {
         wordPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         JLabel meaning = new JLabel("Definition:");
-        JTextArea definitionTextArea = new JTextArea("");
+        JTextArea definitionTextArea = new JTextArea("", 10, 10);
         ArrayList<String> defiList = slangMap.searchByKey(slang.getWord()).getDefinitionList();
-        for (int i = 0; i < defiList.size(); i++) {
-            definitionTextArea.append(defiList.get(i) + "\n");
+        for (String s : defiList) {
+            definitionTextArea.append(s + "\n");
         }
-        definitionTextArea.setPreferredSize(new Dimension(0, 100));
         JScrollPane scrollPane = new JScrollPane(definitionTextArea);
         JPanel meaningPanel = new JPanel();
         meaningPanel.setLayout(new BoxLayout(meaningPanel, BoxLayout.LINE_AXIS));
@@ -518,4 +520,13 @@ public class SlangApp {
         return editDialog;
     }
 
+    public void generateWord(int minutes) {
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        Runnable task = new Runnable() {
+            public void run() {
+                displaySlang(newDayTextPane, slangMap.randomSlang(1).get(0));
+            }
+        };
+        scheduler.scheduleAtFixedRate(task, 0, minutes * 60L, SECONDS);
+    }
 }
