@@ -16,6 +16,7 @@ public class SlangMap implements Serializable {
     public SlangMap() {
         try {
             loadDataStructure(); // load data structure
+            System.out.println("Load OK");
         } catch (IOException e) {
             String file_in = "src/resources/data/slang.txt";
             readFile(file_in); // first run need to load from file
@@ -84,7 +85,7 @@ public class SlangMap implements Serializable {
     }
 
     public Slang searchByKey(String word) {
-        return slangMap.get(word.toUpperCase());
+        return slangMap.get(word);
     }
 
     public ArrayList<Slang> searchByDefinition(String keyword) {

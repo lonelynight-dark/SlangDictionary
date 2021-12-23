@@ -49,6 +49,8 @@ public class SlangApp {
     private JTextPane definitionHistoryTextPane;
     private JPanel quizPanel;
     private JFrame frame;
+    private JDialog addDialog;
+    private JDialog editDialog;
 
     private boolean isSearchByWord = true;
     private final ArrayList<Slang> slangArrayList = new ArrayList<>();
@@ -90,6 +92,11 @@ public class SlangApp {
                             "Do you really want to exit?", "Closing Window",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+                        try {
+                            slangMap.saveDataStructure();
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
                         Window win = SwingUtilities.getWindowAncestor(comp);
                         win.dispose();
                     }
@@ -106,8 +113,10 @@ public class SlangApp {
             public void valueChanged(ListSelectionEvent e) {
                 int index = wordList.getSelectedIndex();
                 if (index != -1) {
-                    Slang slang = slangArrayList.get(index);
-                    displaySlang(definitionTextPane, slang);
+                    if (slangArrayList.size() != 0) {
+                        Slang slang = slangArrayList.get(index);
+                        displaySlang(definitionTextPane, slangMap.searchByKey(slang.getWord()));
+                    }
                 }
             }
         });
@@ -182,10 +191,12 @@ public class SlangApp {
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JDialog addDialog = addSlang(frame);
-                addDialog.setTitle("Add a slang");
-                addDialog.pack();
-                addDialog.setVisible(true);
+                if (addDialog == null || !addDialog.isShowing()) {
+                    addDialog = addSlang(frame);
+                    addDialog.setTitle("Add a slang");
+                    addDialog.pack();
+                    addDialog.setVisible(true);
+                }
             }
         });
         deleteButton.addActionListener(new ActionListener() {
@@ -193,15 +204,17 @@ public class SlangApp {
             public void actionPerformed(ActionEvent e) {
                 int index = wordList.getSelectedIndex();
                 if (index != -1) {
-                    Slang slang = slangArrayList.get(index);
-                    int confirm = JOptionPane.showConfirmDialog(HomePanel, "Do you really want to delete this slang '" +
-                            slang.getWord() + "' ?", "Delete a slang", JOptionPane.YES_NO_OPTION);
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        wordListModel.remove(index);
-                        definitionTextPane.setText("deleted");
-                        slangArrayList.remove(slang);
-                        slangMap.delete(slang.getWord());
-                        wordList.setSelectedIndex(0);
+                    if (slangArrayList.size() != 0) {
+                        Slang slang = slangArrayList.get(index);
+                        int confirm = JOptionPane.showConfirmDialog(HomePanel, "Do you really want to delete this slang '" +
+                                slang.getWord() + "' ?", "Delete a slang", JOptionPane.YES_NO_OPTION);
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            wordListModel.remove(index);
+                            definitionTextPane.setText("deleted");
+                            slangArrayList.remove(slang);
+                            slangMap.delete(slang.getWord());
+                            wordList.setSelectedIndex(0);
+                        }
                     }
                 } else {
                     JOptionPane.showMessageDialog(HomePanel, "Please search and choose a slang first!",
@@ -227,11 +240,15 @@ public class SlangApp {
             public void actionPerformed(ActionEvent e) {
                 int index = wordList.getSelectedIndex();
                 if (index != -1) {
-                    Slang slang = slangArrayList.get(index);
-                    JDialog editDialog = editSlang(frame, slang);
-                    editDialog.setTitle("Edit a slang");
-                    editDialog.pack();
-                    editDialog.setVisible(true);
+                    if (slangArrayList.size() != 0) {
+                        if (editDialog == null || !editDialog.isShowing()) {
+                            Slang slang = slangArrayList.get(index);
+                            editDialog = editSlang(frame, slang);
+                            editDialog.setTitle("Edit a slang");
+                            editDialog.pack();
+                            editDialog.setVisible(true);
+                        }
+                    }
                 } else {
                     JOptionPane.showMessageDialog(HomePanel, "Please search and choose a slang first!",
                             "Edit a slang", JOptionPane.WARNING_MESSAGE);
@@ -354,8 +371,8 @@ public class SlangApp {
 
     public JDialog addSlang(Frame frame) {
         JDialog addDialog = new JDialog(frame);
-        addDialog.setLocation((int)(frame.getLocation().x + 170),
-                (int)(frame.getLocation().y + 100));
+        addDialog.setLocation((int) (frame.getLocation().x + 170),
+                (int) (frame.getLocation().y + 100));
         JLabel name = new JLabel("      Slang:");
         JTextField wordTextField = new JTextField();
         JPanel wordPanel = new JPanel();
@@ -365,7 +382,7 @@ public class SlangApp {
         wordPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
         JLabel meaning = new JLabel("Definition:");
-        JTextArea definitionTextArea = new JTextArea("");
+        JTextArea definitionTextArea = new JTextArea("", 10, 10);
         definitionTextArea.setPreferredSize(new Dimension(0, 100));
         JScrollPane scrollPane = new JScrollPane(definitionTextArea);
         JPanel meaningPanel = new JPanel();
@@ -402,6 +419,10 @@ public class SlangApp {
                             JOptionPane.showMessageDialog(addDialog, "Add successfully");
                             addDialog.dispose();
                         }
+                        int index = wordList.getSelectedIndex();
+                        if (index != -1 && wordList.getModel().getElementAt(index).equals(newSlang.getWord())) {
+                            displaySlang(definitionTextPane, slangMap.searchByKey(newSlang.getWord()));
+                        }
                     } else {
                         slangMap.add(newSlang, true);
                         JOptionPane.showMessageDialog(addDialog, "Add successfully");
@@ -431,10 +452,11 @@ public class SlangApp {
 
     public JDialog editSlang(JFrame frame, Slang slang) {
         JDialog editDialog = new JDialog(frame);
-        editDialog.setLocation((int)(frame.getLocation().x + 170),
-                (int)(frame.getLocation().y + 100));
+        editDialog.setLocation((int) (frame.getLocation().x + 170),
+                (int) (frame.getLocation().y + 100));
         JLabel name = new JLabel("      Slang:");
         JTextField wordTextField = new JTextField(slang.getWord());
+        wordTextField.setEditable(false);
         JPanel wordPanel = new JPanel();
         wordPanel.setLayout(new BoxLayout(wordPanel, BoxLayout.LINE_AXIS));
         wordPanel.add(name);
@@ -443,8 +465,9 @@ public class SlangApp {
 
         JLabel meaning = new JLabel("Definition:");
         JTextArea definitionTextArea = new JTextArea("");
-        for (int i = 0; i < slang.getDefinitionList().size(); i++) {
-            definitionTextArea.append(slang.getDefinitionList().get(i) + "\n");
+        ArrayList<String> defiList = slangMap.searchByKey(slang.getWord()).getDefinitionList();
+        for (int i = 0; i < defiList.size(); i++) {
+            definitionTextArea.append(defiList.get(i) + "\n");
         }
         definitionTextArea.setPreferredSize(new Dimension(0, 100));
         JScrollPane scrollPane = new JScrollPane(definitionTextArea);
@@ -466,8 +489,13 @@ public class SlangApp {
                     String[] defiList = definitionTextArea.getText().split("\n");
                     Slang newSlang = new Slang(wordTextField.getText(), defiList);
                     slangMap.edit(slang.getWord(), newSlang);
+
                     JOptionPane.showMessageDialog(editDialog, "Edit successfully");
                     editDialog.dispose();
+                    int index = wordList.getSelectedIndex();
+                    if (index != -1 && wordList.getModel().getElementAt(index).equals(slang.getWord())) {
+                        displaySlang(definitionTextPane, slangMap.searchByKey(slang.getWord()));
+                    }
                 }
             }
         });
